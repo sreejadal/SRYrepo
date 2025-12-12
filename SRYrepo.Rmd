@@ -98,9 +98,6 @@ dataFull
 View(dataFull)
 # Didn't work, but prob not what we wanna do 
 
-?rbind
-dataFull <- rbind(dataA, dataB, dataP, dataSE)
-
 dataFull$ID_old 
 
 # Removing ID_old from SE and H 
