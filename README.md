@@ -1,2 +1,2 @@
 # SRYrepo
-ConRR group activity 12DEc2025
+ConRR group activity 12Dec2025
