@@ -1,0 +1,155 @@
+---
+title: "SRYrepo"
+output: html_document
+date: "2025-12-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+install.packages("openxlsx")
+library("openxlsx")
+
+dataA <- read.xlsx("A.xlsx")
+dataB <- read.xlsx("B.xlsx")
+dataP <- read.xlsx("P.xlsx")
+dataH <- read.xlsx("H.xlsx")
+
+View(dataA)
+
+class(dataA$Smoker)
+
+dataA$Smoker[dataA$Smoker == "Current"] <- "Y" # This one works
+
+?here
+
+dataA$Gender[dataA$Gender == "PNTS"] <- NA
+
+# Clean B
+
+View(dataB)
+dataB$Smoker[dataB$Smoker == "Current"] <- "Y"
+dataB$Gender[dataB$Gender == "PNTS"] <- NA
+
+# Clean P
+
+View(dataP)
+dataP$Smoker[dataP$Smoker == "Current"] <- "Y"
+dataP$Gender[dataP$Gender == "PNTS"] <- NA
+
+# Clean H
+
+View(dataH)
+dataH$Smoker[dataH$Smoker == "Current"] <- "Y"
+dataH$Gender[dataH$Gender == "PNTS"] <- NA
+
+colnames(dataH)[5] <- "Smoker" 
+
+# Adding ID numbers
+
+library("tidyverse")
+
+dataA$ID <- c(1:nrow(dataA))
+dataA
+
+dataB$ID <- c((nrow(dataA)+1):(nrow(dataB)+nrow(dataA)))
+dataB
+
+dataP$ID <- c((nrow(dataA)+nrow(dataB)+1) : (nrow(dataB)+nrow(dataA)+nrow(dataP)))
+dataP
+
+colnames(dataA)
+colnames(dataH)
+
+# SouthEast
+
+dataSE <- read.xlsx("SouthEast.xlsx")
+View(dataSE)
+
+# Change headings
+
+colnames(dataSE)[9] <- "ID_old" 
+dataSE
+colnames(dataSE)[2] <- "PH" 
+colnames(dataSE)[3] <- "MH"
+
+dataSE$ID <- c((nrow(dataA)+nrow(dataB)+nrow(dataP)+1) : (nrow(dataB)+nrow(dataA)+nrow(dataP)+nrow(dataSE)))
+
+# Cleaning dataSE
+
+dataSE$PH[dataSE$PH == "NO"] <- "N"
+dataSE$PH[dataSE$PH == "YES"] <- "Y"
+
+dataSE$Gender[dataSE$Gender == "PNTS"] <- NA
+dataSE$Smoker[dataSE$Smoker == "Current"] <- "Y"
+
+# Add ID to H 
+
+dataH$ID <- c((nrow(dataA)+nrow(dataB)+nrow(dataP)+nrow(dataSE)+1) : (nrow(dataB)+nrow(dataA)+nrow(dataP)+nrow(dataSE)+nrow(dataH)))
+
+dataFull <- merge(dataA, dataB, by = "ID", all = TRUE)
+dataFull
+View(dataFull)
+# Didn't work, but prob not what we wanna do 
+
+?rbind
+dataFull <- rbind(dataA, dataB, dataP, dataSE)
+
+dataFull$ID_old 
+
+# Removing ID_old from SE and H 
+
+# Add SES5 to H 
+
+colnames(dataSE)
+dataSE <- dataSE[,1:8]
+colnames(dataSE)
+dataSE$ID <- c((nrow(dataA)+nrow(dataB)+nrow(dataP)+1) : (nrow(dataB)+nrow(dataA)+nrow(dataP)+nrow(dataSE)))
+
+colnames(dataH)
+dataH <- dataH[,3:8]
+dataH$ID <- c((nrow(dataA)+nrow(dataB)+nrow(dataP)+nrow(dataSE)+1) : (nrow(dataB)+nrow(dataA)+nrow(dataP)+nrow(dataSE)+nrow(dataH)))
+
+
+dataH$SES5 <- NA
+dataH$Region <- NA
+colnames(dataH)[4] <- "PH" 
+colnames(dataH)[5] <- "MH" 
+
+dataFull2 <- rbind(dataA, dataB, dataP, dataSE, dataH)
+dataFull2
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+dataFull2$PH[dataFull2$PH == "N"] <- 0
+dataFull2$PH[dataFull2$PH == "Y"] <- 1
+
+dataFull2$MH[dataFull2$MH == "N"] <- 0
+dataFull2$MH[dataFull2$MH == "Y"] <- 1
+
+dataFull2$Belief[dataFull2$Belief == "N"] <- 0
+dataFull2$Belief[dataFull2$Belief == "Y"] <- 1
+
+dataFull2$PH <- as.numeric(dataFull2$PH)
+dataFull2$MH <- as.numeric(dataFull2$MH)
+dataFull2$Belief <- as.numeric(dataFull2$Belief)
+
+glm(MH ~ Belief, data = dataFull2, family = binomial)
+glm(PH ~ Belief, data = dataFull2, family = binomial)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
