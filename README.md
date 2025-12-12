@@ -19,6 +19,7 @@ manually add to H file which was technically data we collected)
 - merge A, B, P, SouthEast, and H on ID column
 ** ran into issues here!!! needed to ensure all datasets had the same # of columns
 before merging
+--> no time to glm
 
 Data Encoding:
 
@@ -27,7 +28,7 @@ ANALYSIS:
 believe their condition will get worse while waiting for treatment
 - glm()
 2) prevalence of health issues in the cohort (adjusting for other factors)
-- 
+- no time
 3) how representative the sample is compared to the population
-- 
+- no time
 
